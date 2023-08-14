@@ -29,6 +29,19 @@ $router->post('/s3/upload', function (Request $request) {
     return response()->json(['message' => 'File uploaded', 'path' => $path]);
 });
 
+$router->post('/s3/upload-base64', function (Request $request) {
+    
+    list($baseType, $image) = explode(';', $request->file);
+    list(, $image) = explode(',', $image);
+    $image = base64_decode($image);
+
+    $imageName = "uploads/".time().'.'.'png';
+
+    $path = Storage::disk('s3')->put($imageName, $image);
+
+    return response()->json(['message' => 'File uploaded', 'path' => $path]);
+});
+
 $router->get('/s3/download', function (Request $request) {
 
     $url = Storage::disk('s3')->url($request->key);
